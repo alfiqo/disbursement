@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"errors"
+
 	"github.com/alfiqo/disbursement/helper"
 	"github.com/alfiqo/disbursement/helper/static"
 	"github.com/alfiqo/disbursement/internal/entity"
@@ -25,6 +27,10 @@ func (uc *WalletUsecaseImpl) Disbursement(ctx *fiber.Ctx) error {
 	err := ctx.BodyParser(&request)
 	if err != nil {
 		return err
+	}
+
+	if request.Amount < 0 {
+		return errors.New("amount is invalid")
 	}
 
 	var wallet entity.Wallet
