@@ -1,5 +1,5 @@
 package domain
 
 type WalletRequest struct {
-	Balance float64 `json:"balance"`
+	Amount float64 `json:"amount"`
 }
