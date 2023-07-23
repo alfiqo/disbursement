@@ -13,6 +13,10 @@ For running stack
 ```
 $ docker compose up -d
 ```
+Import DB
+```
+$ docker exec -i disbursement-db-1 mysql -uuser -ppass ewallet < ewallet.sql
+```
 Run App
 ```
 go run main.go

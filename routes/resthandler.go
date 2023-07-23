@@ -16,7 +16,6 @@ func NewResthandler(DB *gorm.DB) *fiber.App {
 	walletRepository := walletRepo.NewWalletRepository(DB)
 	walletUsecase := usecase.NewUsecaseWallet(walletRepository)
 	router.Post("/disbursement", walletUsecase.Disbursement)
-	router.Post("/topup", walletUsecase.Topup)
 
 	return router
 }

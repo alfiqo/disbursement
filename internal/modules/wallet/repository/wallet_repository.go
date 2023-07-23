@@ -7,5 +7,4 @@ import (
 
 type WalletRepository interface {
 	Disbursement(ctx *fiber.Ctx, wallet *entity.Wallet) (*entity.Wallet, error)
-	Topup(ctx *fiber.Ctx, wallet *entity.Wallet) (*entity.Wallet, error)
 }

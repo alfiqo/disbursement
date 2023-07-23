@@ -19,50 +19,6 @@ func NewWalletRepository(DB *gorm.DB) WalletRepository {
 	}
 }
 
-func (r *WalletRepositoryImpl) Topup(ctx *fiber.Ctx, wallet *entity.Wallet) (*entity.Wallet, error) {
-	var user entity.User
-	var transaction entity.Wallet
-
-	eg, _ := errgroup.WithContext(ctx.Context())
-
-	eg.Go(func() error {
-		err := r.DB.First(&user, wallet.UserID).Error
-		return err
-	})
-	eg.Go(func() error {
-		err := r.DB.Table("wallets").Select("sum(debit) debit, sum(credit) credit").Where("user_id = ?", wallet.UserID).Find(&transaction).Error
-		return err
-	})
-	if err := eg.Wait(); err != nil {
-		return nil, err
-	}
-
-	ok := isBalance(&transaction, user.GetBalance())
-	if !ok {
-		return nil, errors.New("cant topup, please contact our administrator")
-	}
-
-	user.AddBalance(wallet.GetDebit())
-
-	err := r.DB.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(&wallet).Error; err != nil {
-			return err
-		}
-
-		if err := tx.Save(&user).Error; err != nil {
-			return err
-		}
-
-		return nil
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return wallet, nil
-}
-
 func (r *WalletRepositoryImpl) Disbursement(ctx *fiber.Ctx, wallet *entity.Wallet) (*entity.Wallet, error) {
 	var user entity.User
 	var transaction entity.Wallet
@@ -106,6 +62,8 @@ func (r *WalletRepositoryImpl) Disbursement(ctx *fiber.Ctx, wallet *entity.Walle
 	if err != nil {
 		return nil, err
 	}
+
+	wallet.User = user
 
 	return wallet, nil
 }

@@ -41,25 +41,3 @@ func (uc *WalletUsecaseImpl) Disbursement(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(helper.GlobalResponse(fiber.StatusOK, "OK", res))
 }
-func (uc *WalletUsecaseImpl) Topup(ctx *fiber.Ctx) error {
-	var request domain.WalletRequest
-
-	err := ctx.BodyParser(&request)
-	if err != nil {
-		return err
-	}
-
-	var wallet entity.Wallet
-	wallet.AddDebit(request.Amount)
-	wallet.UserID = 1
-	wallet.Notes = static.Topup
-
-	data, err := uc.Repository.Topup(ctx, &wallet)
-	if err != nil {
-		return err
-	}
-
-	res := domain.NewCreateResponse(data)
-
-	return ctx.JSON(helper.GlobalResponse(fiber.StatusOK, "OK", res))
-}
